@@ -1,43 +1,117 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# URL Shortener with GitHub Authentication
 
-# Environment Variable
-NEXT_PUBLIC_GITHUB_CLIENT_ID=""
-NEXT_PUBLIC_GITHUB_CLIENT_SECRET=""
-NEXT_PUBLIC_GITHUB_REDIRECT_URI=""
-NEXT_PUBLIC_API_URL=""
-NEXT_PUBLIC_BASE_URL=""
+A secure URL shortener service built with Next.js, Cloudflare Workers, and GitHub OAuth authentication. Create, manage, and track shortened URLs with analytics.
 
-## Getting Started
+## Features
 
-First, run the development server:
+- 🔐 Secure GitHub authentication
+- 🔗 Custom URL shortening with optional custom codes
+- ⏰ URL expiration support
+- 📊 Click analytics tracking
+- 🌍 Geographic data collection
+- 🎯 Dashboard for URL management
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Prerequisites
+
+- Node.js 18 or higher
+- A GitHub account
+- A Cloudflare account
+- wrangler CLI tool (`npm install -g wrangler`)
+
+## Setup
+
+### 1. GitHub OAuth Setup
+
+1. Go to GitHub Developer Settings
+2. Create a new OAuth App
+3. Set the homepage URL to your domain
+4. Set the callback URL to `{your-domain}/auth`
+5. Save the Client ID and Client Secret
+
+### 2. Environment Variables
+
+Create `.env.local` in the root directory:
+```env
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+NEXT_PUBLIC_API_URL=http://localhost:8787
+GitHub OAuth
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
+THE_GITHUB_USERNAME=your_github_username
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Create `worker/.dev.vars` for the Cloudflare Worker:
+```env
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
+THE_GITHUB_USERNAME=your_github_username
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Install Dependencies
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# Install frontend dependencies
+npm install
+# Install worker dependencies
+cd worker
+npm install
+```
 
-## Learn More
+## Development
 
-To learn more about Next.js, take a look at the following resources:
+1. Start the Next.js development server:
+```bash
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. Start the Cloudflare Worker:
+```bash
+cd worker
+npm run dev
+```
 
-## Deploy on Vercel
+The application will be available at:
+- Frontend: http://localhost:3000
+- API: http://localhost:8787
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deployment
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Frontend (Next.js)
+
+Deploy to Vercel:
+```bash
+vercel
+```
+
+### Backend (Cloudflare Worker)
+
+1. Create KV namespace and Analytics Engine dataset:
+```bash
+wrangler kv:namespace create URL_SHORTENER
+wrangler analytics:dataset create URL_CLICK_TRACKING
+```
+
+2. Update `wrangler.toml` with your KV and Analytics bindings
+
+3. Deploy the worker:
+```bash
+cd worker
+wrangler deploy
+```
+
+
+## Usage
+
+1. Visit your deployed application
+2. Login with GitHub
+3. Create shortened URLs from the dashboard
+4. View analytics for your URLs
+
+## License
+
+MIT
+
+## Contributing
+
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
